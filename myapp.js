@@ -21,5 +21,37 @@ var skycons = new Skycons();
 Get value from Bootstrap dropdown menu
 */
 $('#dropdown li').on('click', function(){
-    alert($(this).text());
+    /*alert($(this).text());*/
+  
+  var city=($(this).text());
+  
+  $.ajax('https://query.yahooapis.com/v1/public/yql', {
+         method: 'GET',
+         data: {
+           q: 'select * from weather.forecast where woeid in (select woeid from geo.places(1) where text="' + city + '")',
+           format: 'json'
+         },
+    success: function (data) {
+			 var weatherInfo = data.query.results.channel;
+       var cityCon =  weatherInfo.item.condition.text;
+       var cityDate = weatherInfo.item.condition.date;
+             
+             
+		   console.log(weatherInfo);
+           $('.btn-default').text(city);
+           $('.temperature').text(Math.round((weatherInfo.item.condition.temp - 32)*5/9));           
+           $('.date').text((cityDate).substr(5,11));
+           $('.text').text('｜'+cityCon);
+           $('.dday1').text(weatherInfo.item.forecast[1].date);
+           $('.dday2').text(weatherInfo.item.forecast[2].date);
+           $('.dday3').text(weatherInfo.item.forecast[3].date);
+           $('.tday1').text((Math.round((weatherInfo.item.forecast[1].low - 32)*5/9))+' - '+(Math.round((weatherInfo.item.forecast[1].high - 32)*5/9))+' ℃');
+           $('.tday2').text((Math.round((weatherInfo.item.forecast[2].low - 32)*5/9))+' - '+(Math.round((weatherInfo.item.forecast[2].high - 32)*5/9))+' ℃');
+           $('.tday3').text((Math.round((weatherInfo.item.forecast[3].low - 32)*5/9))+' - '+(Math.round((weatherInfo.item.forecast[3].high - 32)*5/9))+' ℃');
+           
+		   console.log(cityMatch);
+		   console.log(nocity);
+         }
+  });
+  
 });
